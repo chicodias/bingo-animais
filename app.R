@@ -63,8 +63,13 @@ ui <- fluidPage(
     pageWithSidebar(
         headerPanel("Bingo de Bichos"),
         sidebarPanel(
+            
+            uiOutput("downCart"),
+            
+            uiOutput("downIndex"),
+        
             #numericInput("n", "N:", min = 0, max = 100, value = 50),
-            #br(),
+            br(),br(),
             actionButton("goButton", "Iniciar", icon = icon("play", "fa")),
             actionButton("restartButton", "Sortear novamente", icon = icon("random", "fa")),
             #p("Click the button to update the value displayed in the main panel.")
@@ -72,7 +77,8 @@ ui <- fluidPage(
         mainPanel(
 #            imageOutput("nimg"),
             uiOutput(outputId = "image"),
-            verbatimTextOutput("nText")
+            tableOutput("nText")
+            #verbatimTextOutput
         )
     )
     
@@ -83,7 +89,7 @@ ui <- fluidPage(
 server <- function(input, output) {
         
     v <- reactiveValues(data = NULL)
-    #v$data <- sample(1:40,1)
+    v$data <- sample(1:40,1)
     
     observeEvent(input$goButton, {
         v$data <- sample(1:40,1)
@@ -100,11 +106,12 @@ server <- function(input, output) {
         
     })  
     
-        output$nText <- renderPrint({
-            if (is.null(v$data))
-                print("Que tal começar um novo jogo?")
-            else
-            dados %>% filter(V2 %in% v$data) %>% select("Animais sorteados: ") %>%  print
+        output$nText <- renderTable({
+            #if (is.null(v$data))
+            #    print("Que tal começar um novo jogo?")
+            #else
+            
+            dados %>% filter(V2 %in% v$data) %>% select("Animais sorteados: ") #%>%  print
             
         })
         
@@ -112,7 +119,16 @@ server <- function(input, output) {
                 url_im <- dados[v$data[length(v$data)],1] %>% as.character()
                 tags$img(src = url_im, width = 225)
         })
+     
         
+        output$downCart <- renderUI({
+            tagList(a( "Baixar cartelas", href="https://github.com/chicodias/bingo-animais/raw/master/Cartelas.pdf", target="_blank"))
+            
+        })
+        output$downIndex <- renderUI({
+            tagList(a( "Índice de bichos", href="https://github.com/chicodias/bingo-animais/raw/master/Indice-de-bichos.pdf", target="_blank"))
+        })
+         
     }
 
 
