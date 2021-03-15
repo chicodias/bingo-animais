@@ -1,0 +1,10 @@
+name: bingo
+title:
+username:
+account: chicodias
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3789846
+bundleId: 4344578
+url: https://chicodias.shinyapps.io/bingo/
+when: 1615765993.40089
