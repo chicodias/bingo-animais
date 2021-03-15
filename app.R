@@ -46,15 +46,14 @@ dados<-as.data.frame(matrix(c(
     "VACA.jpg",39,"https://imgur.com/pZGXBF0.png",
     "ZEBRA.jpg",40,"https://i.imgur.com/rP3J2NK.jpg"),ncol=3,byrow=T))
 
+
 library(shiny)
 library(magrittr)
 library(dplyr)
-library("jpeg")
-library("png")
-library('graphics')
-library('grDevices')
 
 
+#removendo extensao
+dados <- dados %>% mutate("Animais sorteados: " = tools::file_path_sans_ext(dados$V1))
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -66,8 +65,8 @@ ui <- fluidPage(
         sidebarPanel(
             #numericInput("n", "N:", min = 0, max = 100, value = 50),
             #br(),
-            actionButton("goButton", "Iniciar"),
-            actionButton("restartButton", "Sortear novamente"),
+            actionButton("goButton", "Iniciar", icon = icon("play", "fa")),
+            actionButton("restartButton", "Sortear novamente", icon = icon("random", "fa")),
             #p("Click the button to update the value displayed in the main panel.")
         ),
         mainPanel(
@@ -84,25 +83,28 @@ ui <- fluidPage(
 server <- function(input, output) {
         
     v <- reactiveValues(data = NULL)
+    #v$data <- sample(1:40,1)
     
     observeEvent(input$goButton, {
         v$data <- sample(1:40,1)
     })
     
     observeEvent(input$restartButton, {
+        if (is.null(v$data)) return
+            
         sorteados <- v$data
         sorteio<-(1:40)[-sorteados]
         if(length(sorteio)==1) amostra=sorteio else
             amostra<-sample(c(sorteio),1)
         v$data <- c(sorteados,amostra)
-        #browser()
+        
     })  
     
         output$nText <- renderPrint({
             if (is.null(v$data))
                 print("Que tal começar um novo jogo?")
             else
-            dados %>% filter(V2 %in% v$data) %>% select(V1) %>%  print
+            dados %>% filter(V2 %in% v$data) %>% select("Animais sorteados: ") %>%  print
             
         })
         
